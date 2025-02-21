@@ -27,19 +27,15 @@ do
 	fi
 done
 
-# detect if running in docker
-if [ -f /.dockerenv ]; then
-	echo "Running within docker, installing initial dependencies";
-	apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
-		ca-certificates \
-		gnupg \
-		gosu \
-		lsb-release \
-		software-properties-common \
-		sudo \
-		wget \
-		;
-fi
+echo "Running within docker, installing initial dependencies";
+apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
+	ca-certificates \
+	gnupg \
+	gosu \
+	lsb-release \
+	software-properties-common \
+	wget \
+;
 
 # script directory
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -105,54 +101,6 @@ else
 	fi
 fi
 
-# NuttX toolchain (arm-none-eabi-gcc)
-if [[ $INSTALL_NUTTX == "true" ]]; then
-
-	echo
-	echo "Installing NuttX dependencies"
-
-	DEBIAN_FRONTEND=noninteractive apt-get -y --quiet --no-install-recommends install \
-		automake \
-		binutils-dev \
-		bison \
-		build-essential \
-		curl \
-		flex \
-		g++-multilib \
-		gcc-arm-none-eabi \
-		gcc-multilib \
-		gdb-multiarch \
-		genromfs \
-		gettext \
-		gperf \
-		kconfig-frontends \
-		libelf-dev \
-		libexpat-dev \
-		libgmp-dev \
-		libisl-dev \
-		libmpc-dev \
-		libmpfr-dev \
-		libncurses-dev \
-		libncurses6 \
-		libncursesw6 \
-		libnewlib-arm-none-eabi \
-		libstdc++-arm-none-eabi-newlib \
-		libtool \
-		libunwind-dev \
-		pkg-config \
-		screen \
-		texinfo \
-		u-boot-tools \
-		util-linux \
-		vim-common \
-		;
-
-	if [ -n "$USER" ]; then
-		# add user to dialout group (serial port access)
-		sudo usermod -aG dialout $USER
-	fi
-fi
-
 # Simulation tools
 if [[ $INSTALL_SIM == "true" ]]; then
 
@@ -167,7 +115,7 @@ if [[ $INSTALL_SIM == "true" ]]; then
 	# Gazebo / Gazebo classic installation
 	if [[ "${UBUNTU_RELEASE}" == "18.04" || "${UBUNTU_RELEASE}" == "20.04" ]]; then
 		sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-		wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+		wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
 		# Update list, since new gazebo-stable.list has been added
 		apt-get update -y --quiet
 
@@ -186,7 +134,7 @@ if [[ $INSTALL_SIM == "true" ]]; then
 		echo "Earlier versions will be removed"
 		# Add Gazebo binary repository
 		wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
-		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 		apt-get update -y --quiet
 
 		# Install Gazebo
