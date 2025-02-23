@@ -27,15 +27,15 @@ do
 	fi
 done
 
-# echo "Running within docker, installing initial dependencies";
-# apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
-# 	ca-certificates \
-# 	gnupg \
-# 	gosu \
-# 	lsb-release \
-# 	software-properties-common \
-# 	wget \
-# ;
+echo "Running within docker, installing initial dependencies";
+apt-get --quiet -y update && DEBIAN_FRONTEND=noninteractive apt-get --quiet -y install \
+	ca-certificates \
+	gnupg \
+	gosu \
+	lsb-release \
+	software-properties-common \
+	wget \
+;
 
 # script directory
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
